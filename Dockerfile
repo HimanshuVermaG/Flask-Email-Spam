@@ -20,7 +20,7 @@ RUN pip install --upgrade pip \
 
 # Pre-download NLTK corpora into the builder layer so the final image doesn't
 # need outbound internet access at runtime.
-RUN python -c "\
+RUN PYTHONPATH=/install/lib/python3.11/site-packages python -c "\
 import nltk; \
 nltk.download('punkt',     download_dir='/nltk_data', quiet=True); \
 nltk.download('punkt_tab', download_dir='/nltk_data', quiet=True); \
