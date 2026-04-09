@@ -3,268 +3,295 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Spam Shield – AI-powered SMS and email spam classifier built with Flask, NLTK and Scikit-Learn." />
-  <title>Spam Shield | AI Spam Classifier</title>
+  <meta name="description" content="SpamShield — classify SMS and email messages as spam or legitimate using a Naive Bayes model trained on 5 000+ real messages." />
+  <title>SpamShield — SMS & Email Classifier</title>
 
-  <!-- Google Fonts -->
+  <!-- Inter font — the standard for SaaS products -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 </head>
 <body>
 
-  <!-- ── Animated Background ─────────────────────────────────────────── -->
-  <div class="bg-canvas" aria-hidden="true">
-    <div class="orb orb-1"></div>
-    <div class="orb orb-2"></div>
-    <div class="orb orb-3"></div>
-    <div class="grid-overlay"></div>
-  </div>
+  <!-- Static background — no orbs -->
+  <div class="bg-canvas" aria-hidden="true"></div>
 
-  <!-- ── Page Shell ──────────────────────────────────────────────────── -->
-  <div class="page-shell">
+  <div class="page">
 
-    <!-- Header -->
-    <header class="site-header">
+    <!-- ── Top nav ────────────────────────────────────────────────────── -->
+    <nav class="topnav" role="navigation">
       <div class="brand">
-        <div class="brand-icon" aria-hidden="true">
-          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="20" cy="20" r="20" fill="url(#brand-grad)"/>
-            <path d="M13 14h14l-7 8-7-8z" fill="white" opacity="0.9"/>
-            <path d="M13 14v12h14V14" stroke="white" stroke-width="1.5" stroke-linejoin="round" opacity="0.7"/>
-            <path d="M18 22l-2 4m6-4l2 4" stroke="#f87171" stroke-width="2" stroke-linecap="round"/>
-            <defs>
-              <linearGradient id="brand-grad" x1="0" y1="0" x2="40" y2="40">
-                <stop offset="0%" stop-color="#6366f1"/>
-                <stop offset="100%" stop-color="#a855f7"/>
-              </linearGradient>
-            </defs>
+        <div class="brand-mark" aria-hidden="true">
+          <!-- Clean shield icon — flat and minimal -->
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M8 1.5L2.5 4v4c0 2.8 2.1 5.1 5.5 5.5 3.4-.4 5.5-2.7 5.5-5.5V4L8 1.5z" fill="white" opacity=".9"/>
+            <path d="M5.5 8l1.8 1.8L10.5 6" stroke="#0e0e11" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
-        <div class="brand-text">
-          <span class="brand-name">Spam<span class="accent">Shield</span></span>
-          <span class="brand-tag">AI Classifier</span>
-        </div>
+        <span class="brand-name">SpamShield</span>
       </div>
-      <div class="header-badge">
-        <span class="badge-dot"></span>
-        Model Ready
-      </div>
-    </header>
 
-    <!-- Hero -->
-    <section class="hero">
-      <h1 class="hero-title">
-        Detect Spam<br>
-        <span class="gradient-text">Instantly.</span>
+    </nav>
+
+    <!-- ── Hero ───────────────────────────────────────────────────────── -->
+    <section class="hero" aria-labelledby="hero-heading">
+      <div class="hero-eyebrow">Text Classifier</div>
+      <h1 class="hero-title" id="hero-heading">
+        Detect spam in any message,<br>in milliseconds.
       </h1>
       <p class="hero-sub">
-        Paste any SMS or email text below. Our Naive Bayes model — trained on 5 000+ messages — will classify it in milliseconds.
+        Paste an SMS or email below. The model pre-processes your text, vectorises
+        it with TF-IDF, and runs inference through a Multinomial Naive Bayes
+        classifier — all server-side, no data stored.
       </p>
-      <!-- Stats Row -->
-      <div class="stats-row">
-        <div class="stat">
-          <span class="stat-val">5 169</span>
-          <span class="stat-lbl">Training samples</span>
+
+      <div class="meta-row" role="list" aria-label="Model statistics">
+        <div class="meta-item" role="listitem">
+          <span class="meta-val">5,169</span>
+          <span class="meta-lbl">Training samples</span>
         </div>
-        <div class="stat-divider"></div>
-        <div class="stat">
-          <span class="stat-val">97 %+</span>
-          <span class="stat-lbl">Accuracy</span>
+        <div class="meta-sep" aria-hidden="true"></div>
+        <div class="meta-item" role="listitem">
+          <span class="meta-val">97%+</span>
+          <span class="meta-lbl">Test accuracy</span>
         </div>
-        <div class="stat-divider"></div>
-        <div class="stat">
-          <span class="stat-val">TF-IDF</span>
-          <span class="stat-lbl">Vectorizer</span>
+        <div class="meta-sep" aria-hidden="true"></div>
+        <div class="meta-item" role="listitem">
+          <span class="meta-val">TF-IDF</span>
+          <span class="meta-lbl">Vectorizer</span>
         </div>
-        <div class="stat-divider"></div>
-        <div class="stat">
-          <span class="stat-val">NB</span>
-          <span class="stat-lbl">Classifier</span>
+        <div class="meta-sep" aria-hidden="true"></div>
+        <div class="meta-item" role="listitem">
+          <span class="meta-val">Naive Bayes</span>
+          <span class="meta-lbl">Classifier</span>
         </div>
       </div>
     </section>
 
-    <!-- ── Main Card ────────────────────────────────────────────────── -->
-    <main class="card" id="main-card">
+    <!-- ── Classifier card ─────────────────────────────────────────────── -->
+    <main class="card" id="classifier" role="main">
 
-      <!-- Textarea with toolbar -->
-      <div class="input-block">
-        <div class="input-toolbar">
-          <label for="msg-input" class="input-label">Message / Email text</label>
-          <span class="char-counter" id="char-counter">0 chars</span>
+      <div class="card-body">
+        <!-- Label row -->
+        <div class="field-header">
+          <label class="field-label" for="msg-input">Message text</label>
+          <span class="field-hint" id="char-counter" aria-live="polite">0 chars</span>
         </div>
 
-        <div class="textarea-wrapper">
+        <!-- Textarea -->
+        <div class="textarea-wrap">
           <textarea
             id="msg-input"
             name="message"
             rows="6"
-            placeholder="Paste your SMS or email here…&#10;e.g. &quot;Congratulations! You've won a ₹10,000 Amazon Gift Card!&quot;"
+            placeholder="Paste your SMS or email here…"
             spellcheck="true"
             autocomplete="off"
+            aria-describedby="char-counter"
           ></textarea>
-          <button class="clear-btn" id="clear-btn" title="Clear" aria-label="Clear text">
-            <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path d="M6 6l8 8M6 14L14 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <button
+            class="clear-btn"
+            id="clear-btn"
+            type="button"
+            aria-label="Clear input"
+            title="Clear"
+          >
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M2 2l8 8M10 2L2 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
           </button>
         </div>
 
-        <!-- Example chips -->
-        <div class="examples">
-          <span class="examples-label">Try an example:</span>
-          <button class="chip chip-spam" data-example="spam" type="button">🚨 Spam message</button>
-          <button class="chip chip-ham"  data-example="ham"  type="button">✅ Normal message</button>
+        <!-- Quick examples — below textarea, left-aligned, minimal -->
+        <div class="examples" role="group" aria-label="Load an example message">
+          <span class="examples-label">Try:</span>
+          <button class="example-btn" data-example="spam" type="button">
+            Spam example
+          </button>
+          <button class="example-btn" data-example="ham" type="button">
+            Normal message
+          </button>
         </div>
       </div>
 
-      <!-- Analyse button -->
-      <button class="analyse-btn" id="analyse-btn" type="button">
-        <span class="btn-text">Analyse Message</span>
-        <span class="btn-loader" id="btn-loader" aria-hidden="true"></span>
-        <svg class="btn-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none">
-          <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-      </button>
+      <!-- Thin divider between input and action -->
+      <div class="card-divider"></div>
 
-      <!-- Result panel (shown after analysis) -->
-      <div class="result-panel" id="result-panel" aria-live="polite" hidden>
-
-        <div class="result-header">
-          <div class="result-icon" id="result-icon" aria-hidden="true"></div>
-          <div>
-            <p class="result-verdict-label">Verdict</p>
-            <p class="result-verdict" id="result-verdict">—</p>
-          </div>
-        </div>
-
-        <!-- Confidence bar -->
-        <div class="conf-block" id="conf-block">
-          <div class="conf-labels">
-            <span>Confidence</span>
-            <span id="conf-pct">—</span>
-          </div>
-          <div class="conf-track">
-            <div class="conf-fill" id="conf-fill"></div>
-          </div>
-        </div>
-
-        <p class="result-detail" id="result-detail"></p>
-
-        <!-- Analysed snippet -->
-        <div class="analysed-snippet">
-          <span class="snippet-label">Analysed input</span>
-          <p class="snippet-text" id="snippet-text"></p>
-        </div>
-
-        <button class="reset-btn" id="reset-btn" type="button">Analyse another message</button>
+      <!-- Action row -->
+      <div class="card-footer">
+        <p class="shortcut-hint">
+          <kbd>Ctrl</kbd> + <kbd>Enter</kbd> to classify
+        </p>
+        <button class="btn-primary" id="analyse-btn" type="button">
+          <span class="spinner" id="btn-spinner" aria-hidden="true"></span>
+          <span class="btn-text">Classify message</span>
+          <svg class="btn-arrow" viewBox="0 0 14 14" fill="none">
+            <path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
       </div>
 
+      <!-- ── Result — rendered inline below the action row ──────────────── -->
+      <div class="result" id="result" role="status" aria-live="polite" hidden>
+
+        <div class="result-row">
+          <!-- Left: icon indicator -->
+          <div class="verdict-indicator" id="verdict-indicator" aria-hidden="true">
+            <svg id="verdict-icon" width="18" height="18" viewBox="0 0 18 18" fill="none"></svg>
+          </div>
+
+          <!-- Right: content -->
+          <div class="verdict-body">
+            <p class="verdict-meta">Classification result</p>
+            <p class="verdict-label" id="verdict-label">—</p>
+            <p class="verdict-desc"  id="verdict-desc"></p>
+
+            <!-- Confidence bar -->
+            <div class="conf-row" id="conf-row">
+              <div class="conf-track">
+                <div class="conf-fill" id="conf-fill"></div>
+              </div>
+              <span class="conf-pct" id="conf-pct"></span>
+            </div>
+
+            <!-- Input snippet -->
+            <div class="snippet" id="snippet">
+              <span class="snippet-label">Analysed input</span>
+              <p class="snippet-text" id="snippet-text"></p>
+            </div>
+
+            <!-- Reset -->
+            <button class="btn-ghost" id="reset-btn" type="button">
+              Classify another message
+            </button>
+          </div>
+        </div>
+
+      </div>
     </main>
 
-    <!-- ── How It Works ─────────────────────────────────────────────── -->
-    <section class="how-it-works">
-      <h2 class="section-title">How It Works</h2>
-      <div class="steps">
-        <div class="step">
-          <div class="step-num">1</div>
-          <div class="step-content">
-            <h3>Pre-process</h3>
-            <p>Lowercase → tokenise → remove stopwords & punctuation → Porter-stem</p>
-          </div>
+    <!-- ── Pipeline section ─────────────────────────────────────────────── -->
+    <section aria-labelledby="pipeline-heading">
+      <h2 class="section-heading" id="pipeline-heading">How it works</h2>
+
+      <div class="pipeline" role="list">
+        <div class="pipeline-step" role="listitem">
+          <span class="step-index">01</span>
+          <p class="step-title">Pre-process</p>
+          <p class="step-desc">Lowercase, tokenise, remove stopwords &amp; punctuation, apply Porter stemming.</p>
         </div>
-        <div class="step-arrow">→</div>
-        <div class="step">
-          <div class="step-num">2</div>
-          <div class="step-content">
-            <h3>Vectorise</h3>
-            <p>TF-IDF transforms the cleaned text into a sparse numeric vector</p>
-          </div>
+
+        <div class="pipeline-arrow" aria-hidden="true">→</div>
+
+        <div class="pipeline-step" role="listitem">
+          <span class="step-index">02</span>
+          <p class="step-title">Vectorise</p>
+          <p class="step-desc">TF-IDF transforms the cleaned tokens into a sparse numeric vector.</p>
         </div>
-        <div class="step-arrow">→</div>
-        <div class="step">
-          <div class="step-num">3</div>
-          <div class="step-content">
-            <h3>Classify</h3>
-            <p>Multinomial Naïve Bayes decides: <strong>Spam</strong> or <strong>Not Spam</strong></p>
-          </div>
+
+        <div class="pipeline-arrow" aria-hidden="true">→</div>
+
+        <div class="pipeline-step" role="listitem">
+          <span class="step-index">03</span>
+          <p class="step-title">Classify</p>
+          <p class="step-desc">Multinomial Naive Bayes returns <strong>Spam</strong> or <strong>Not Spam</strong> with a confidence score.</p>
         </div>
       </div>
     </section>
 
-    <footer class="site-footer">
-      <p>Built with <span class="accent">Flask · NLTK · Scikit-Learn</span> &nbsp;|&nbsp; SMS Spam Collection dataset</p>
+    <!-- ── Footer ──────────────────────────────────────────────────────── -->
+    <footer class="site-footer" role="contentinfo">
+      <span>Built with Flask · NLTK · Scikit-Learn · UCI SMS Spam Collection</span>
+      <div class="footer-links">
+        <a class="footer-link" href="https://archive.ics.uci.edu/dataset/228/sms+spam+collection" target="_blank" rel="noopener">Dataset</a>
+        <a class="footer-link" href="https://flask.palletsprojects.com/" target="_blank" rel="noopener">Flask</a>
+        <a class="footer-link" href="https://scikit-learn.org/" target="_blank" rel="noopener">Scikit-Learn</a>
+      </div>
     </footer>
 
-  </div><!-- /page-shell -->
+  </div><!-- /page -->
 
   <script>
-    // ── Constants ─────────────────────────────────────────────────────
-    const EXAMPLES = {
-      spam: "Congratulations! You've won a FREE ₹10,000 Amazon Gift Card! Click here to claim your prize 👉 http://bit.ly/win-now. Hurry, offer ends today!",
-      ham:  "Hey, are we still meeting tomorrow for lunch? Let me know if the plan changed 😊"
+    // ── SVG paths for verdict icons ────────────────────────────────────────
+    const ICONS = {
+      spam:  '<path d="M9 2L16 15H2L9 2z" stroke="#e5484d" stroke-width="1.4" stroke-linejoin="round"/><path d="M9 7v4M9 12.5v.5" stroke="#e5484d" stroke-width="1.5" stroke-linecap="round"/>',
+      ham:   '<path d="M3 9l4 4 8-8" stroke="#30a46c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>',
+      error: '<circle cx="9" cy="9" r="7" stroke="#e79d13" stroke-width="1.4"/><path d="M9 6v3.5M9 11v.5" stroke="#e79d13" stroke-width="1.5" stroke-linecap="round"/>',
     };
 
-    // ── DOM refs ──────────────────────────────────────────────────────
-    const msgInput     = document.getElementById('msg-input');
-    const charCounter  = document.getElementById('char-counter');
-    const clearBtn     = document.getElementById('clear-btn');
-    const analyseBtn   = document.getElementById('analyse-btn');
-    const btnLoader    = document.getElementById('btn-loader');
-    const resultPanel  = document.getElementById('result-panel');
-    const resultVerdict= document.getElementById('result-verdict');
-    const resultIcon   = document.getElementById('result-icon');
-    const resultDetail = document.getElementById('result-detail');
-    const confBlock    = document.getElementById('conf-block');
-    const confPct      = document.getElementById('conf-pct');
-    const confFill     = document.getElementById('conf-fill');
-    const snippetText  = document.getElementById('snippet-text');
-    const resetBtn     = document.getElementById('reset-btn');
+    const EXAMPLES = {
+      spam: "Congratulations! You've won a FREE ₹10,000 Amazon Gift Card! Click here to claim your prize: http://bit.ly/win-now. Offer ends today!",
+      ham:  "Hey, are we still meeting tomorrow for lunch? Let me know if the plan changed.",
+    };
 
-    // ── Character counter ─────────────────────────────────────────────
-    msgInput.addEventListener('input', () => {
+    // ── DOM refs ────────────────────────────────────────────────────────────
+    const msgInput      = document.getElementById('msg-input');
+    const charCounter   = document.getElementById('char-counter');
+    const clearBtn      = document.getElementById('clear-btn');
+    const analyseBtn    = document.getElementById('analyse-btn');
+    const btnSpinner    = document.getElementById('btn-spinner');
+    const resultEl      = document.getElementById('result');
+    const verdictInd    = document.getElementById('verdict-indicator');
+    const verdictIcon   = document.getElementById('verdict-icon');
+    const verdictLabel  = document.getElementById('verdict-label');
+    const verdictDesc   = document.getElementById('verdict-desc');
+    const confRow       = document.getElementById('conf-row');
+    const confFill      = document.getElementById('conf-fill');
+    const confPct       = document.getElementById('conf-pct');
+    const snippetEl     = document.getElementById('snippet');
+    const snippetText   = document.getElementById('snippet-text');
+    const resetBtn      = document.getElementById('reset-btn');
+
+    // ── Character counter ───────────────────────────────────────────────────
+    msgInput.addEventListener('input', updateMeta);
+    updateMeta();
+
+    function updateMeta() {
       const n = msgInput.value.length;
-      charCounter.textContent = `${n} char${n !== 1 ? 's' : ''}`;
-      clearBtn.style.opacity = n > 0 ? '1' : '0';
-      clearBtn.style.pointerEvents = n > 0 ? 'auto' : 'none';
-    });
-    clearBtn.style.opacity = '0';
-    clearBtn.style.pointerEvents = 'none';
+      charCounter.textContent = `${n.toLocaleString()} char${n !== 1 ? 's' : ''}`;
+      if (n > 0) {
+        clearBtn.classList.add('visible');
+      } else {
+        clearBtn.classList.remove('visible');
+      }
+    }
 
-    // ── Clear button ──────────────────────────────────────────────────
+    // ── Clear ───────────────────────────────────────────────────────────────
     clearBtn.addEventListener('click', () => {
       msgInput.value = '';
-      msgInput.dispatchEvent(new Event('input'));
+      updateMeta();
       hideResult();
       msgInput.focus();
     });
 
-    // ── Example chips ─────────────────────────────────────────────────
-    document.querySelectorAll('.chip').forEach(chip => {
-      chip.addEventListener('click', () => {
-        msgInput.value = EXAMPLES[chip.dataset.example];
-        msgInput.dispatchEvent(new Event('input'));
+    // ── Examples ────────────────────────────────────────────────────────────
+    document.querySelectorAll('.example-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        msgInput.value = EXAMPLES[btn.dataset.example];
+        updateMeta();
         hideResult();
         msgInput.focus();
       });
     });
 
-    // ── Reset button ──────────────────────────────────────────────────
+    // ── Reset ────────────────────────────────────────────────────────────────
     resetBtn.addEventListener('click', () => {
       msgInput.value = '';
-      msgInput.dispatchEvent(new Event('input'));
+      updateMeta();
       hideResult();
       msgInput.focus();
     });
 
-    // ── Analysis ──────────────────────────────────────────────────────
-    analyseBtn.addEventListener('click', runAnalysis);
+    // ── Keyboard shortcut ────────────────────────────────────────────────────
     msgInput.addEventListener('keydown', e => {
-      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) runAnalysis();
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') classify();
     });
+    analyseBtn.addEventListener('click', classify);
 
-    async function runAnalysis() {
+    // ── Core classify function ───────────────────────────────────────────────
+    async function classify() {
       const text = msgInput.value.trim();
       if (!text) { shake(msgInput); return; }
 
@@ -273,93 +300,92 @@
 
       try {
         const res  = await fetch('/predict', {
-          method : 'POST',
+          method:  'POST',
           headers: { 'Content-Type': 'application/json' },
-          body   : JSON.stringify({ message: text }),
+          body:    JSON.stringify({ message: text }),
         });
         const data = await res.json();
 
         if (!data.success) {
-          showError(data.error || 'Unknown server error.');
+          renderError(data.error || 'Server returned an error.');
           return;
         }
-        showResult(data);
-      } catch (err) {
-        showError('Network error – is the server running?');
+        renderResult(data);
+      } catch {
+        renderError('Network error — is the server running?');
       } finally {
         setLoading(false);
       }
     }
 
-    // ── UI helpers ────────────────────────────────────────────────────
+    // ── Render helpers ──────────────────────────────────────────────────────
     function setLoading(on) {
       analyseBtn.disabled = on;
       analyseBtn.classList.toggle('loading', on);
-      btnLoader.style.display = on ? 'block' : 'none';
     }
 
     function hideResult() {
-      resultPanel.hidden = true;
-      resultPanel.className = 'result-panel';
+      resultEl.hidden = true;
+      resultEl.className = 'result';
     }
 
-    function showResult(data) {
+    function renderResult(data) {
       const isSpam = data.prediction === 1;
-
-      resultPanel.hidden = false;
-      resultPanel.classList.add(isSpam ? 'is-spam' : 'is-ham');
+      const key    = isSpam ? 'spam' : 'ham';
 
       // Icon
-      resultIcon.textContent = isSpam ? '🚨' : '✅';
+      verdictIcon.innerHTML  = ICONS[key];
+      verdictInd.className   = `verdict-indicator ${key}-ind`;
 
-      // Verdict text
-      resultVerdict.textContent = data.label;
+      // Label
+      verdictLabel.textContent = data.label;
+      verdictLabel.className   = `verdict-label ${key}-label`;
 
-      // Detail sentence
-      resultDetail.textContent = isSpam
-        ? 'Our model detected patterns typical of phishing or scam messages. Proceed with caution.'
-        : 'The message appears legitimate. No obvious spam signals were found.';
+      // Description
+      verdictDesc.textContent = isSpam
+        ? 'Our model detected patterns commonly found in phishing or scam messages.'
+        : 'This message appears legitimate — no spam signals detected.';
 
-      // Confidence bar
+      // Confidence
       if (data.confidence !== null) {
-        confBlock.style.display = '';
-        confPct.textContent = `${data.confidence}%`;
-        confFill.style.width = '0%';
-        confFill.style.background = isSpam
-          ? 'linear-gradient(90deg,#ef4444,#f97316)'
-          : 'linear-gradient(90deg,#10b981,#06b6d4)';
-        // Animate after paint
+        confRow.style.display = '';
+        confPct.textContent   = `${data.confidence}% confidence`;
+        confFill.className    = `conf-fill ${key}-fill`;
+        confFill.style.width  = '0%';
+        // Trigger animation on next frame
         requestAnimationFrame(() => {
-          confFill.style.transition = 'width 0.8s ease';
           confFill.style.width = `${data.confidence}%`;
         });
       } else {
-        confBlock.style.display = 'none';
+        confRow.style.display = 'none';
       }
 
       // Snippet
-      const max = 120;
-      snippetText.textContent = data.message.length > max
-        ? data.message.slice(0, max) + '…'
+      const MAX = 140;
+      snippetText.textContent = data.message.length > MAX
+        ? data.message.slice(0, MAX) + '…'
         : data.message;
+      snippetEl.style.display = '';
 
-      // Scroll into view
-      resultPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      // Show
+      resultEl.hidden = false;
+      resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
-    function showError(msg) {
-      resultPanel.hidden = false;
-      resultPanel.classList.add('is-error');
-      resultIcon.textContent = '⚠️';
-      resultVerdict.textContent = 'Error';
-      resultDetail.textContent = msg;
-      confBlock.style.display = 'none';
-      snippetText.textContent = '';
+    function renderError(msg) {
+      verdictIcon.innerHTML  = ICONS.error;
+      verdictInd.className   = 'verdict-indicator error-ind';
+      verdictLabel.textContent = 'Error';
+      verdictLabel.className   = 'verdict-label error-label';
+      verdictDesc.textContent  = msg;
+      confRow.style.display    = 'none';
+      snippetEl.style.display  = 'none';
+      resultEl.hidden = false;
     }
 
     function shake(el) {
       el.classList.remove('shake');
-      void el.offsetWidth; // reflow
+      void el.offsetWidth; // force reflow
       el.classList.add('shake');
       el.addEventListener('animationend', () => el.classList.remove('shake'), { once: true });
     }
