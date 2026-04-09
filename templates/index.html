@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Spam Shield – AI-powered SMS and email spam classifier built with Flask, NLTK and Scikit-Learn." />
+  <title>Spam Shield | AI Spam Classifier</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+
+  <!-- ── Animated Background ─────────────────────────────────────────── -->
+  <div class="bg-canvas" aria-hidden="true">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <!-- ── Page Shell ──────────────────────────────────────────────────── -->
+  <div class="page-shell">
+
+    <!-- Header -->
+    <header class="site-header">
+      <div class="brand">
+        <div class="brand-icon" aria-hidden="true">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="20" cy="20" r="20" fill="url(#brand-grad)"/>
+            <path d="M13 14h14l-7 8-7-8z" fill="white" opacity="0.9"/>
+            <path d="M13 14v12h14V14" stroke="white" stroke-width="1.5" stroke-linejoin="round" opacity="0.7"/>
+            <path d="M18 22l-2 4m6-4l2 4" stroke="#f87171" stroke-width="2" stroke-linecap="round"/>
+            <defs>
+              <linearGradient id="brand-grad" x1="0" y1="0" x2="40" y2="40">
+                <stop offset="0%" stop-color="#6366f1"/>
+                <stop offset="100%" stop-color="#a855f7"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">Spam<span class="accent">Shield</span></span>
+          <span class="brand-tag">AI Classifier</span>
+        </div>
+      </div>
+      <div class="header-badge">
+        <span class="badge-dot"></span>
+        Model Ready
+      </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+      <h1 class="hero-title">
+        Detect Spam<br>
+        <span class="gradient-text">Instantly.</span>
+      </h1>
+      <p class="hero-sub">
+        Paste any SMS or email text below. Our Naive Bayes model — trained on 5 000+ messages — will classify it in milliseconds.
+      </p>
+      <!-- Stats Row -->
+      <div class="stats-row">
+        <div class="stat">
+          <span class="stat-val">5 169</span>
+          <span class="stat-lbl">Training samples</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-val">97 %+</span>
+          <span class="stat-lbl">Accuracy</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-val">TF-IDF</span>
+          <span class="stat-lbl">Vectorizer</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat">
+          <span class="stat-val">NB</span>
+          <span class="stat-lbl">Classifier</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Main Card ────────────────────────────────────────────────── -->
+    <main class="card" id="main-card">
+
+      <!-- Textarea with toolbar -->
+      <div class="input-block">
+        <div class="input-toolbar">
+          <label for="msg-input" class="input-label">Message / Email text</label>
+          <span class="char-counter" id="char-counter">0 chars</span>
+        </div>
+
+        <div class="textarea-wrapper">
+          <textarea
+            id="msg-input"
+            name="message"
+            rows="6"
+            placeholder="Paste your SMS or email here…&#10;e.g. &quot;Congratulations! You've won a ₹10,000 Amazon Gift Card!&quot;"
+            spellcheck="true"
+            autocomplete="off"
+          ></textarea>
+          <button class="clear-btn" id="clear-btn" title="Clear" aria-label="Clear text">
+            <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path d="M6 6l8 8M6 14L14 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+
+        <!-- Example chips -->
+        <div class="examples">
+          <span class="examples-label">Try an example:</span>
+          <button class="chip chip-spam" data-example="spam" type="button">🚨 Spam message</button>
+          <button class="chip chip-ham"  data-example="ham"  type="button">✅ Normal message</button>
+        </div>
+      </div>
+
+      <!-- Analyse button -->
+      <button class="analyse-btn" id="analyse-btn" type="button">
+        <span class="btn-text">Analyse Message</span>
+        <span class="btn-loader" id="btn-loader" aria-hidden="true"></span>
+        <svg class="btn-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none">
+          <path d="M5 12H19M19 12L12 5M19 12L12 19" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <!-- Result panel (shown after analysis) -->
+      <div class="result-panel" id="result-panel" aria-live="polite" hidden>
+
+        <div class="result-header">
+          <div class="result-icon" id="result-icon" aria-hidden="true"></div>
+          <div>
+            <p class="result-verdict-label">Verdict</p>
+            <p class="result-verdict" id="result-verdict">—</p>
+          </div>
+        </div>
+
+        <!-- Confidence bar -->
+        <div class="conf-block" id="conf-block">
+          <div class="conf-labels">
+            <span>Confidence</span>
+            <span id="conf-pct">—</span>
+          </div>
+          <div class="conf-track">
+            <div class="conf-fill" id="conf-fill"></div>
+          </div>
+        </div>
+
+        <p class="result-detail" id="result-detail"></p>
+
+        <!-- Analysed snippet -->
+        <div class="analysed-snippet">
+          <span class="snippet-label">Analysed input</span>
+          <p class="snippet-text" id="snippet-text"></p>
+        </div>
+
+        <button class="reset-btn" id="reset-btn" type="button">Analyse another message</button>
+      </div>
+
+    </main>
+
+    <!-- ── How It Works ─────────────────────────────────────────────── -->
+    <section class="how-it-works">
+      <h2 class="section-title">How It Works</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h3>Pre-process</h3>
+            <p>Lowercase → tokenise → remove stopwords & punctuation → Porter-stem</p>
+          </div>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h3>Vectorise</h3>
+            <p>TF-IDF transforms the cleaned text into a sparse numeric vector</p>
+          </div>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h3>Classify</h3>
+            <p>Multinomial Naïve Bayes decides: <strong>Spam</strong> or <strong>Not Spam</strong></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="site-footer">
+      <p>Built with <span class="accent">Flask · NLTK · Scikit-Learn</span> &nbsp;|&nbsp; SMS Spam Collection dataset</p>
+    </footer>
+
+  </div><!-- /page-shell -->
+
+  <script>
+    // ── Constants ─────────────────────────────────────────────────────
+    const EXAMPLES = {
+      spam: "Congratulations! You've won a FREE ₹10,000 Amazon Gift Card! Click here to claim your prize 👉 http://bit.ly/win-now. Hurry, offer ends today!",
+      ham:  "Hey, are we still meeting tomorrow for lunch? Let me know if the plan changed 😊"
+    };
+
+    // ── DOM refs ──────────────────────────────────────────────────────
+    const msgInput     = document.getElementById('msg-input');
+    const charCounter  = document.getElementById('char-counter');
+    const clearBtn     = document.getElementById('clear-btn');
+    const analyseBtn   = document.getElementById('analyse-btn');
+    const btnLoader    = document.getElementById('btn-loader');
+    const resultPanel  = document.getElementById('result-panel');
+    const resultVerdict= document.getElementById('result-verdict');
+    const resultIcon   = document.getElementById('result-icon');
+    const resultDetail = document.getElementById('result-detail');
+    const confBlock    = document.getElementById('conf-block');
+    const confPct      = document.getElementById('conf-pct');
+    const confFill     = document.getElementById('conf-fill');
+    const snippetText  = document.getElementById('snippet-text');
+    const resetBtn     = document.getElementById('reset-btn');
+
+    // ── Character counter ─────────────────────────────────────────────
+    msgInput.addEventListener('input', () => {
+      const n = msgInput.value.length;
+      charCounter.textContent = `${n} char${n !== 1 ? 's' : ''}`;
+      clearBtn.style.opacity = n > 0 ? '1' : '0';
+      clearBtn.style.pointerEvents = n > 0 ? 'auto' : 'none';
+    });
+    clearBtn.style.opacity = '0';
+    clearBtn.style.pointerEvents = 'none';
+
+    // ── Clear button ──────────────────────────────────────────────────
+    clearBtn.addEventListener('click', () => {
+      msgInput.value = '';
+      msgInput.dispatchEvent(new Event('input'));
+      hideResult();
+      msgInput.focus();
+    });
+
+    // ── Example chips ─────────────────────────────────────────────────
+    document.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        msgInput.value = EXAMPLES[chip.dataset.example];
+        msgInput.dispatchEvent(new Event('input'));
+        hideResult();
+        msgInput.focus();
+      });
+    });
+
+    // ── Reset button ──────────────────────────────────────────────────
+    resetBtn.addEventListener('click', () => {
+      msgInput.value = '';
+      msgInput.dispatchEvent(new Event('input'));
+      hideResult();
+      msgInput.focus();
+    });
+
+    // ── Analysis ──────────────────────────────────────────────────────
+    analyseBtn.addEventListener('click', runAnalysis);
+    msgInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) runAnalysis();
+    });
+
+    async function runAnalysis() {
+      const text = msgInput.value.trim();
+      if (!text) { shake(msgInput); return; }
+
+      setLoading(true);
+      hideResult();
+
+      try {
+        const res  = await fetch('/predict', {
+          method : 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body   : JSON.stringify({ message: text }),
+        });
+        const data = await res.json();
+
+        if (!data.success) {
+          showError(data.error || 'Unknown server error.');
+          return;
+        }
+        showResult(data);
+      } catch (err) {
+        showError('Network error – is the server running?');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    // ── UI helpers ────────────────────────────────────────────────────
+    function setLoading(on) {
+      analyseBtn.disabled = on;
+      analyseBtn.classList.toggle('loading', on);
+      btnLoader.style.display = on ? 'block' : 'none';
+    }
+
+    function hideResult() {
+      resultPanel.hidden = true;
+      resultPanel.className = 'result-panel';
+    }
+
+    function showResult(data) {
+      const isSpam = data.prediction === 1;
+
+      resultPanel.hidden = false;
+      resultPanel.classList.add(isSpam ? 'is-spam' : 'is-ham');
+
+      // Icon
+      resultIcon.textContent = isSpam ? '🚨' : '✅';
+
+      // Verdict text
+      resultVerdict.textContent = data.label;
+
+      // Detail sentence
+      resultDetail.textContent = isSpam
+        ? 'Our model detected patterns typical of phishing or scam messages. Proceed with caution.'
+        : 'The message appears legitimate. No obvious spam signals were found.';
+
+      // Confidence bar
+      if (data.confidence !== null) {
+        confBlock.style.display = '';
+        confPct.textContent = `${data.confidence}%`;
+        confFill.style.width = '0%';
+        confFill.style.background = isSpam
+          ? 'linear-gradient(90deg,#ef4444,#f97316)'
+          : 'linear-gradient(90deg,#10b981,#06b6d4)';
+        // Animate after paint
+        requestAnimationFrame(() => {
+          confFill.style.transition = 'width 0.8s ease';
+          confFill.style.width = `${data.confidence}%`;
+        });
+      } else {
+        confBlock.style.display = 'none';
+      }
+
+      // Snippet
+      const max = 120;
+      snippetText.textContent = data.message.length > max
+        ? data.message.slice(0, max) + '…'
+        : data.message;
+
+      // Scroll into view
+      resultPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    function showError(msg) {
+      resultPanel.hidden = false;
+      resultPanel.classList.add('is-error');
+      resultIcon.textContent = '⚠️';
+      resultVerdict.textContent = 'Error';
+      resultDetail.textContent = msg;
+      confBlock.style.display = 'none';
+      snippetText.textContent = '';
+    }
+
+    function shake(el) {
+      el.classList.remove('shake');
+      void el.offsetWidth; // reflow
+      el.classList.add('shake');
+      el.addEventListener('animationend', () => el.classList.remove('shake'), { once: true });
+    }
+  </script>
+</body>
+</html>
