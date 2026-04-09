@@ -1,0 +1,40 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# docker-compose.yml — local development & single-node deployment
+# Usage:
+#   docker compose up --build          # build and start
+#   docker compose up -d               # run detached
+#   docker compose logs -f spamshield  # follow logs
+#   docker compose down                # stop and remove containers
+# ─────────────────────────────────────────────────────────────────────────────
+services:
+  spamshield:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      # Target the final runtime stage (skip if you want the full builder)
+      target: runtime
+
+    image: spamshield:latest
+
+    container_name: spamshield
+
+    ports:
+      - "${HOST_PORT:-8080}:8080"
+
+    environment:
+      PORT:      8080
+      WORKERS:   2
+      THREADS:   4
+      LOG_LEVEL: info
+
+    # Restart automatically unless explicitly stopped
+    restart: unless-stopped
+
+    # Lightweight health-check so Docker knows when the app is ready
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import urllib.request; urllib.request.urlopen('http://localhost:8080/')"]
+      interval: 30s
+      timeout:  10s
+      retries:  3
+      start_period: 20s

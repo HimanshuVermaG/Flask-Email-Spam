@@ -203,4 +203,4 @@ Pull requests are welcome! For major changes, please open an issue first to disc
 
 ---
 
-<p align="center">Built with ❤️ using Flask · NLTK · Scikit-Learn</p>
+<p align="center">Built with using Flask · NLTK · Scikit-Learn</p>

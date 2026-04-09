@@ -1,0 +1,40 @@
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+
+# ── Virtual environments ──────────────────────────────────────────────────────
+demo/
+venv/
+.venv/
+env/
+
+# ── Jupyter / notebooks ───────────────────────────────────────────────────────
+*.ipynb
+.ipynb_checkpoints/
+
+# ── Data & raw assets (not needed at runtime) ─────────────────────────────────
+spam_data.csv
+Spam_Messages.txt
+
+# ── Git ───────────────────────────────────────────────────────────────────────
+.git/
+.gitignore
+.gitattributes
+
+# ── OS / editor junk ─────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# ── Docs ─────────────────────────────────────────────────────────────────────
+README.md
+
+# ── CI / Docker meta ─────────────────────────────────────────────────────────
+.dockerignore
+docker-compose.yml
